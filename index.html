@@ -17,31 +17,6 @@
       align-items: center;
       justify-content: center;
     }
-
-    h1 {
-      font-size: 12rem;
-      font-family: "Garamond", serif;
-      color: transparent;
-      -webkit-text-stroke: 10px magenta;
-      position: relative;
-    }
-
-    h1::before {
-      content: "WELCOME";
-      position: absolute;
-      width: 0%;
-      height: 100%;
-      overflow: hidden;
-      color: magenta;
-      border-right: 8px solid maroon;
-      transition: 1s ease-in-out;
-    }
-
-    h1:hover::before {
-      width: 100%;
-      filter: drop-shadow(1px 1px 35px magenta);
-    }
-
     .btn-container {
       margin-top: 550px;
       display: flex;
@@ -54,7 +29,7 @@
       font-size: 30px;
       font-weight: bold;
       border: none;
-      border-radius: 15%;
+      border-radius: 0%;
       cursor: pointer;
       text-decoration: none;
       color: black;
