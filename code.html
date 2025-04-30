@@ -4,7 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <meta http-equiv="refresh" content="500">
   <title>LIVE CODE EDITOR - ACE</title>
 
   <!-- Font Awesome -->
@@ -26,7 +25,8 @@
 
     .save-btn {
       display: inline-block;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
+      margin-right: 10px;
       padding: 8px 12px;
       background-color: black;
       color: white;
@@ -41,7 +41,7 @@
     }
 
     .container {
-        background-color:whitesmoke;
+      background-color: whitesmoke;
       display: flex;
       gap: 10px;
       padding: 20px;
@@ -84,7 +84,6 @@
       cssEditor = ace.edit("css-editor", {
         mode: "ace/mode/css",
         theme: "ace/theme/monokai",
-        
         enableBasicAutocompletion: true,
         enableLiveAutocompletion: true,
         enableSnippets: true
@@ -132,23 +131,43 @@
     function saveJS() {
       saveFile('script.js', jsEditor.getValue());
     }
+
+    function openFile(input, editor) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        editor.setValue(e.target.result, -1); // -1 to keep cursor position
+        run(); // Refresh output
+      };
+      reader.readAsText(file);
+    }
   </script>
 </head>
 
 <body>
   <div class="container">
     <div class="left">
+      <!-- HTML -->
       <label><i class="fa-solid fa-code"></i> HTML</label>
       <div id="html-editor" class="editor"></div>
       <button class="save-btn" onclick="saveHTML()">Save HTML</button>
+      <input type="file" id="openHTML" style="display:none" onchange="openFile(this, htmlEditor)">
+      <button class="save-btn" onclick="document.getElementById('openHTML').click()">Open HTML</button>
 
-      <label></br><i class="fa-brands fa-css3-alt"></i> CSS</label>
+      <!-- CSS -->
+      <label><br><i class="fa-brands fa-css3-alt"></i> CSS</label>
       <div id="css-editor" class="editor"></div>
       <button class="save-btn" onclick="saveCSS()">Save CSS</button>
+      <input type="file" id="openCSS" style="display:none" onchange="openFile(this, cssEditor)">
+      <button class="save-btn" onclick="document.getElementById('openCSS').click()">Open CSS</button>
 
-      <label></br><i class="fa-brands fa-js"></i> JAVASCRIPT</label>
+      <!-- JS -->
+      <label><br><i class="fa-brands fa-js"></i> JAVASCRIPT</label>
       <div id="js-editor" class="editor"></div>
       <button class="save-btn" onclick="saveJS()">Save JS</button>
+      <input type="file" id="openJS" style="display:none" onchange="openFile(this, jsEditor)">
+      <button class="save-btn" onclick="document.getElementById('openJS').click()">Open JS</button>
     </div>
 
     <div class="right">
