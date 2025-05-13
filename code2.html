@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>LIVE CODE EDITOR - ACE + Timer</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>LIVE CODE EDITOR - Auto Save on Timer</title>
 
   <!-- Font Awesome -->
   <script src="https://kit.fontawesome.com/ec1da4970b.js" crossorigin="anonymous"></script>
@@ -18,6 +18,7 @@
       background: whitesmoke;
       margin: 0;
     }
+
     .editor {
       height: 200px;
       width: 100%;
@@ -26,6 +27,7 @@
       margin-bottom: 10px;
       font-size: 14px;
     }
+
     .save-btn {
       display: inline-block;
       margin-bottom: 20px;
@@ -37,26 +39,32 @@
       cursor: pointer;
       font-size: 15px;
     }
+
     .save-btn:hover {
       background-color: blue;
     }
+
     .container {
       display: flex;
       gap: 10px;
       padding: 20px;
     }
+
     .left {
       flex: 1;
     }
+
     .right {
       flex: 1;
     }
+
     iframe {
       width: 100%;
       height: 800px;
       border: 1px solid #ccc;
       border-radius: 10px;
     }
+
     #stopwatch {
       padding: 10px 20px;
       background: white;
@@ -65,11 +73,13 @@
       align-items: center;
       gap: 10px;
     }
+
     #timeInput {
       width: 100px;
       padding: 5px;
       font-size: 14px;
     }
+
     #startBtn {
       padding: 5px 10px;
       font-size: 14px;
@@ -79,9 +89,11 @@
       border-radius: 6px;
       cursor: pointer;
     }
+
     #startBtn:hover {
       background-color: blue;
     }
+
     #timerDisplay {
       font-weight: bold;
       font-size: 16px;
@@ -89,7 +101,6 @@
   </style>
 
   <script>
-   
     let htmlEditor, cssEditor, jsEditor;
     let countdown;
 
@@ -143,16 +154,10 @@
       a.click();
     }
 
-    function saveHTML() {
-      saveFile('index.html', htmlEditor.getValue());
-    }
-
-    function saveCSS() {
-      saveFile('style.css', cssEditor.getValue());
-    }
-
-    function saveJS() {
-      saveFile('script.js', jsEditor.getValue());
+    function autoSaveAll() {
+      saveFile("index.html", htmlEditor.getValue());
+      saveFile("style.css", cssEditor.getValue());
+      saveFile("script.js", jsEditor.getValue());
     }
 
     function startTimer() {
@@ -173,15 +178,13 @@
 
         if (seconds <= 0) {
           clearInterval(countdown);
-          display.textContent = "Time's up!";
-          exitPage();
+          display.textContent = "Time's up! Saving and exiting...";
+          autoSaveAll();
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 2000); // Delay to ensure download starts before navigating away
         }
       }, 1000);
-    }
-
-    function exitPage() {
-      // Safely navigate to blank or another page
-      window.location.href = "index.html";
     }
   </script>
 </head>
@@ -198,15 +201,15 @@
     <div class="left">
       <label><i class="fa-solid fa-code"></i> HTML</label>
       <div id="html-editor" class="editor"></div>
-      <button class="save-btn" onclick="saveHTML()">Save HTML</button>
+      <button class="save-btn" onclick="saveFile('index.html', htmlEditor.getValue())">Save HTML</button>
 
       <label><br><i class="fa-brands fa-css3-alt"></i> CSS</label>
       <div id="css-editor" class="editor"></div>
-      <button class="save-btn" onclick="saveCSS()">Save CSS</button>
+      <button class="save-btn" onclick="saveFile('style.css', cssEditor.getValue())">Save CSS</button>
 
       <label><br><i class="fa-brands fa-js"></i> JAVASCRIPT</label>
       <div id="js-editor" class="editor"></div>
-      <button class="save-btn" onclick="saveJS()">Save JS</button>
+      <button class="save-btn" onclick="saveFile('script.js', jsEditor.getValue())">Save JS</button>
     </div>
 
     <div class="right">
