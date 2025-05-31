@@ -19,6 +19,37 @@
       margin: 0;
     }
 
+    /* Popup styles */
+    #popup {
+      position: fixed;
+      top: -100px;
+      left: 0;
+      right: 0;
+      background: #333;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 16px;
+      z-index: 9999;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      transition: top 0.5s ease;
+    }
+
+    #popup.show {
+      top: 0;
+    }
+
+    #popup button {
+      margin-top: 10px;
+      padding: 6px 12px;
+      background: white;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
     .editor {
       height: 200px;
       width: 100%;
@@ -98,6 +129,15 @@
       font-weight: bold;
       font-size: 16px;
     }
+
+    .filename-input {
+      width: 100%;
+      padding: 6px;
+      font-size: 14px;
+      margin-bottom: 5px;
+      border-radius: 6px;
+      border: 1px solid #aaa;
+    }
   </style>
 
   <script>
@@ -105,6 +145,11 @@
     let countdown;
 
     window.onload = function () {
+      // Show popup
+      setTimeout(() => {
+        document.getElementById("popup").classList.add("show");
+      }, 300);
+
       ace.require("ace/ext/language_tools");
 
       htmlEditor = ace.edit("html-editor", {
@@ -136,6 +181,10 @@
       jsEditor.session.on('change', run);
     };
 
+    function closePopup() {
+      document.getElementById("popup").classList.remove("show");
+    }
+
     function run() {
       let htmlCode = htmlEditor.getValue();
       let cssCode = cssEditor.getValue();
@@ -154,10 +203,33 @@
       a.click();
     }
 
+    function handleSave(type) {
+      let fileName = "";
+      let content = "";
+
+      if (type === "html") {
+        fileName = document.getElementById("htmlFileName").value.trim();
+        content = htmlEditor.getValue();
+      } else if (type === "css") {
+        fileName = document.getElementById("cssFileName").value.trim();
+        content = cssEditor.getValue();
+      } else if (type === "js") {
+        fileName = document.getElementById("jsFileName").value.trim();
+        content = jsEditor.getValue();
+      }
+
+      if (!fileName || !fileName.includes(".")) {
+        alert("Please enter a valid file name with extension (e.g., style.css)");
+        return;
+      }
+
+      saveFile(fileName, content);
+    }
+
     function autoSaveAll() {
-      saveFile("index.html", htmlEditor.getValue());
-      saveFile("style.css", cssEditor.getValue());
-      saveFile("script.js", jsEditor.getValue());
+      handleSave("html");
+      handleSave("css");
+      handleSave("js");
     }
 
     function startTimer() {
@@ -182,14 +254,33 @@
           autoSaveAll();
           setTimeout(() => {
             window.location.href = "index.html";
-          }, 2000); // Delay to ensure download starts before navigating away
+          }, 2000);
         }
       }, 1000);
     }
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        alert("Tab switched or minimized. Exiting for safety.");
+        window.location.href = "index.html";
+      }
+    });
+
+    window.addEventListener("blur", () => {
+      alert("Window inactive. Exiting for safety.");
+      window.location.href = "index.html";
+    });
   </script>
 </head>
 
 <body>
+  <!-- Popup -->
+  <div id="popup">
+    "The code you write makes you a programmer. The code you read makes you a developer."
+    <br />
+    <button onclick="closePopup()">OK</button>
+  </div>
+
   <div id="stopwatch">
     <label><i class="fa-regular fa-clock"></i> Timer (sec):</label>
     <input type="number" id="timeInput" placeholder="e.g. 60" />
@@ -199,17 +290,23 @@
 
   <div class="container">
     <div class="left">
-      <label><i class="fa-solid fa-code"></i> HTML</label>
+      <!-- HTML Section -->
+      <label><i class="fa-solid fa-code"></i> HTML File Name:</label>
+      <input type="text" id="htmlFileName" class="filename-input" value="index.html" />
       <div id="html-editor" class="editor"></div>
-      <button class="save-btn" onclick="saveFile('index.html', htmlEditor.getValue())">Save HTML</button>
+      <button class="save-btn" onclick="handleSave('html')">Save HTML</button>
 
-      <label><br><i class="fa-brands fa-css3-alt"></i> CSS</label>
+      <!-- CSS Section -->
+      <label><br><i class="fa-brands fa-css3-alt"></i> CSS File Name:</label>
+      <input type="text" id="cssFileName" class="filename-input" value="style.css" />
       <div id="css-editor" class="editor"></div>
-      <button class="save-btn" onclick="saveFile('style.css', cssEditor.getValue())">Save CSS</button>
+      <button class="save-btn" onclick="handleSave('css')">Save CSS</button>
 
-      <label><br><i class="fa-brands fa-js"></i> JAVASCRIPT</label>
+      <!-- JavaScript Section -->
+      <label><br><i class="fa-brands fa-js"></i> JavaScript File Name:</label>
+      <input type="text" id="jsFileName" class="filename-input" value="script.js" />
       <div id="js-editor" class="editor"></div>
-      <button class="save-btn" onclick="saveFile('script.js', jsEditor.getValue())">Save JS</button>
+      <button class="save-btn" onclick="handleSave('js')">Save JS</button>
     </div>
 
     <div class="right">
